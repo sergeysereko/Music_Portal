@@ -22,5 +22,7 @@
         public Style Style { get; set; }
 
         public Singer Singer { get; set; }
+
+        public User User { get; set; }
     }
 }
