@@ -12,12 +12,12 @@ namespace Music_Portal.Models
     {
         public Style()
         {
-            this.Music_Item = new HashSet<Music_Item>();
+            this.Music_file = new HashSet<Music_file>();
         }
         public int Id { get; set; }
 
         public string Name { get; set; }
 
-        public ICollection<Music_Item> Music_Item { get; set; }
+        public ICollection<Music_file> Music_file { get; set; }
     }
 }
