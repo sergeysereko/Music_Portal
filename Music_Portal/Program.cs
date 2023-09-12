@@ -1,8 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using Music_Portal.Models;
+using Music_Portal;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Получаем строку подключения из файла конфигурации
+string? connection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+
+
+// добавляем контекст ApplicationContext в качестве сервиса в приложение
+builder.Services.AddDbContext<MusicPortalContext>(options => options.UseSqlServer(connection));
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -12,16 +24,8 @@ builder.Services.AddSession(options =>
 
 });
 
-// Получаем строку подключения из файла конфигурации
-string? connection = builder.Configuration.GetConnectionString("DefaultConnection");
-
-// добавляем контекст ApplicationContext в качестве сервиса в приложение
-builder.Services.AddDbContext<MusicPortalContext>(options => options.UseSqlServer(connection));
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -31,6 +35,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseSession();   // Добавляем middleware-компонент для работы с сессиями
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

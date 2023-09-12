@@ -1,5 +1,10 @@
-﻿namespace Music_Portal.Models
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Music_Portal.Models
 {
+
     public class User
     {
         public User()
