@@ -23,6 +23,52 @@ namespace Music_Portal.Controllers
         }
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Login(Login logon)
+        {
+            if (ModelState.IsValid)
+            {
+                if (db.Users.ToList().Count == 0)
+                {
+                    ModelState.AddModelError("", "Wrong login or password!");
+                    return View(logon);
+                }
+                var users = db.Users.Where(a => a.Name == logon.UserName);
+                if (users.ToList().Count == 0)
+                {
+                    ModelState.AddModelError("", "Wrong login or password!");
+                    return View(logon);
+                }
+                var user = users.First();
+                string? salt = user.Salt;
+
+                //переводим пароль в байт-массив  
+                byte[] password = Encoding.Unicode.GetBytes(salt + logon.Password);
+
+                //создаем объект для получения средств шифрования  
+                var md5 = MD5.Create();
+
+                //вычисляем хеш-представление в байтах  
+                byte[] byteHash = md5.ComputeHash(password);
+
+                StringBuilder hash = new StringBuilder(byteHash.Length);
+                for (int i = 0; i < byteHash.Length; i++)
+                    hash.Append(string.Format("{0:X2}", byteHash[i]));
+
+                if (user.Password != hash.ToString())
+                {
+                    ModelState.AddModelError("", "Wrong login or password!");
+                    return View(logon);
+                }
+                HttpContext.Session.SetString("login", user.Name);
+                HttpContext.Session.SetString("Access", user.Access.ToString());
+                return RedirectToAction("Index", "Home");
+            }
+            return View(logon);
+        }
+
+
         [HttpGet]
         public IActionResult Registration()
         {
