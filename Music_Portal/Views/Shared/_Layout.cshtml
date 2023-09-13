@@ -30,7 +30,7 @@
                             @if (Context.Session.GetString("login") != null && Context.Session.GetString("Access") == "1")
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AllUsers">Все участники</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="AllUsers">Все участники</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Styles">Стили</a>

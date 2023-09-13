@@ -119,5 +119,14 @@ namespace Music_Portal.Controllers
             return View(reg);
         }
 
+
+        public async Task<IActionResult> AllUsers()
+        {
+            IEnumerable<User> users = await Task.Run(() => db.Users);
+            ViewBag.Users = users;
+            return View();
+        }
+
+
     }
 }
