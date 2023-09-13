@@ -6,12 +6,15 @@ namespace Music_Portal.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+
+        MusicPortalContext db;
+        public HomeController(MusicPortalContext context )
         {
-            _logger = logger;
+            db = context;
         }
+
+
 
         public IActionResult Index()
         {
