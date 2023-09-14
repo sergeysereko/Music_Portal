@@ -194,5 +194,43 @@ namespace Music_Portal.Controllers
             return (db.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
+
+
+
+        public async Task<IActionResult> DeleteUser(int? id)
+        {
+            if (id == null || db.Users == null)
+            {
+                return NotFound();
+            }
+
+            var user = await db.Users.FirstOrDefaultAsync(m => m.Id == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            if (db.Users == null)
+            {
+                return Problem("Entity set 'MusicPortalContext.User'  is null.");
+            }
+            var user = await db.Users.FindAsync(id);
+            if (user != null)
+            {
+                db.Users.Remove(user);
+            }
+
+            await db.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
