@@ -22,6 +22,8 @@ namespace Music_Portal.Models
         public string Salt { get; set; }
 
         [Display(Name = "Доступ")]
+        [Required(ErrorMessage = "Поле обязательно для заполнения!")]
+        [RegularExpression("^[01]$", ErrorMessage = "Поле может содержать только 0 или 1.")]
         public int Access { get; set; }
 
         public ICollection<Music_file> Music_file { get; set; }

@@ -15,6 +15,11 @@ namespace Music_Portal.Controllers
             db = context;
         }
 
+        public IActionResult Index()
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
 
         public ActionResult Logout()
         {
@@ -134,9 +139,60 @@ namespace Music_Portal.Controllers
         }
 
 
-       
+
+        public async Task<IActionResult> EditAccess(int? id)
+        {
+            if (id == null || db.Users == null)
+            {
+                return NotFound();
+            }
+
+            var user = await db.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
+        }
 
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditAccess(int id, [Bind("Id,Name,Email,Password,Salt,Access,Music_file")] User user)
+        {
+            if (id != user.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    db.Update(user);
+                    await db.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserExists(user.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(user);
+        }
+
+        private bool UserExists(int id)
+        {
+            return (db.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
 
     }
 }
