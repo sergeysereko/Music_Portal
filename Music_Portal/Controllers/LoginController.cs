@@ -16,6 +16,12 @@ namespace Music_Portal.Controllers
         }
 
 
+        public ActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
+        }
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -126,6 +132,10 @@ namespace Music_Portal.Controllers
             ViewBag.Users = users;
             return View();
         }
+
+
+       
+
 
 
     }
