@@ -1,0 +1,41 @@
+﻿@model Music_Portal.Models.Singer
+@{
+    ViewData["Title"] = "Singers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Исполнители</h1>
+
+<p>
+    <a asp-action="CreateSinger" class="links">Добавить Исполнителя</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewBag.Singers)
+        {
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    <a asp-action="EditSinger" asp-route-id="@item.Id" class="links">Редактировать</a> |
+                    <a asp-action="DeleteSinger" asp-route-id="@item.Id" class="links">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

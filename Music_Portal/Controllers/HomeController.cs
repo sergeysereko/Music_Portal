@@ -163,5 +163,13 @@ namespace Music_Portal.Controllers
             return RedirectToAction("Styles");
         }
 
+
+        public async Task<IActionResult> Singers()
+        {
+            IEnumerable<Singer> singer = await Task.Run(() => db.Singers);
+            ViewBag.Singers = singer;
+            return View();
+        }
+
     }
 }
