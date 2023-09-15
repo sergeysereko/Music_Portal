@@ -1,0 +1,34 @@
+﻿@model Music_Portal.Models.Style
+@{
+    ViewData["Title"] = "CreateStyle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Добавление Стиля Музыки</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+
+        <form asp-action="CreateStyle" asp-controller="Home" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">Название</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Добавить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" class="links">Вернуться на Главную</a>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

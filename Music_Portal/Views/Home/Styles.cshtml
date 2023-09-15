@@ -1,0 +1,42 @@
+﻿@model Music_Portal.Models.Style
+@{
+    ViewData["Title"] = "Styles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1>Стили музыки</h1>
+
+<p>
+    <a asp-action="CreateStyle" class="links">Добавить Стиль</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewBag.Styles)
+        {
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    <a asp-action="EditStyle" asp-route-id="@item.Id" class="links">Редактировать</a> |
+                    <a asp-action="DeleteStyle" asp-route-id="@item.Id" class="links">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

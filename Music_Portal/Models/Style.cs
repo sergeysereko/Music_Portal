@@ -13,6 +13,8 @@ namespace Music_Portal.Models
         }
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "Поле обязательно для заполнения!")]
+        [Display(Name = "Название ситля")]
         public string Name { get; set; }
 
         public ICollection<Music_file> Music_file { get; set; }

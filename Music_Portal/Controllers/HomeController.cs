@@ -14,8 +14,6 @@ namespace Music_Portal.Controllers
             db = context;
         }
 
-
-
         public IActionResult Index()
         {
             return View();
@@ -31,5 +29,44 @@ namespace Music_Portal.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+
+        public async Task<IActionResult> Styles()
+        {
+            IEnumerable<Style> style = await Task.Run(() => db.Styles);
+            ViewBag.Styles = style;
+            return View();
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> CreateStyle()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateStyle(Style style)
+        {
+
+                if (ModelState.IsValid)
+                {
+                   
+                    db.Add(style);
+                    db.SaveChangesAsync();
+                    return RedirectToAction("Styles");
+            }
+                else
+                {
+                    return View(style);
+                }
+
+
+        }
+
     }
 }
