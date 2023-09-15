@@ -139,7 +139,7 @@ namespace Music_Portal.Controllers
         }
 
 
-
+        [HttpGet]
         public async Task<IActionResult> EditAccess(int? id)
         {
             if (id == null || db.Users == null)
@@ -195,8 +195,7 @@ namespace Music_Portal.Controllers
         }
 
 
-
-
+        [HttpGet]
         public async Task<IActionResult> DeleteUser(int? id)
         {
             if (id == null || db.Users == null)

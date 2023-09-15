@@ -68,7 +68,7 @@ namespace Music_Portal.Controllers
 
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> EditStyle(int? id)
         {
             if (id == null || db.Styles == null)
@@ -123,6 +123,45 @@ namespace Music_Portal.Controllers
             return (db.Styles?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteStyle(int? id)
+        {
+            if (id == null || db.Styles == null)
+            {
+                return NotFound();
+            }
+
+            var style = await db.Styles.FirstOrDefaultAsync(m => m.Id == id);
+            if (style == null)
+            {
+                return NotFound();
+            }
+
+            return View(style);
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteStyle(int id)
+        {
+            if (db.Styles == null)
+            {
+                return Problem("Entity set 'MusicPortalContext.Style'  is null.");
+            }
+            var style = await db.Styles.FindAsync(id);
+            if (style != null)
+            {
+                db.Styles.Remove(style);
+            }
+
+            await db.SaveChangesAsync();
+            return RedirectToAction("Styles");
+        }
 
     }
 }
