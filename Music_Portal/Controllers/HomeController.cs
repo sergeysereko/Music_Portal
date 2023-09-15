@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Music_Portal.Models;
 using System.Diagnostics;
 
@@ -53,20 +54,75 @@ namespace Music_Portal.Controllers
         public IActionResult CreateStyle(Style style)
         {
 
-                if (ModelState.IsValid)
-                {
+            if (ModelState.IsValid)
+            {
                    
-                    db.Add(style);
-                    db.SaveChangesAsync();
-                    return RedirectToAction("Styles");
+                db.Add(style);
+                db.SaveChangesAsync();
+                return RedirectToAction("Styles");
             }
-                else
-                {
-                    return View(style);
-                }
-
+            else
+            {
+                return View(style);
+            }
 
         }
+
+
+        public async Task<IActionResult> EditStyle(int? id)
+        {
+            if (id == null || db.Styles == null)
+            {
+                return NotFound();
+            }
+
+            var style = await db.Styles.FindAsync(id);
+            if (style == null)
+            {
+                return NotFound();
+            }
+            return View(style);
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditStyle(int id, [Bind("Id,Name,Music_file")] Style style)
+        {
+            if (id != style.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    db.Update(style);
+                    await db.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StyleExists(style.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Styles");
+            }
+            return View(style);
+        }
+
+        private bool StyleExists(int id)
+        {
+            return (db.Styles?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
 
     }
 }
