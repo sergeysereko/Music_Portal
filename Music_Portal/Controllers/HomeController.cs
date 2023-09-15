@@ -171,5 +171,33 @@ namespace Music_Portal.Controllers
             return View();
         }
 
+
+
+        [HttpGet]
+        public async Task<IActionResult> CreateSinger()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateSinger(Singer singer)
+        {
+
+            if (ModelState.IsValid)
+            {
+
+                db.Add(singer);
+                db.SaveChangesAsync();
+                return RedirectToAction("Singers");
+            }
+            else
+            {
+                return View(singer);
+            }
+
+        }
+
     }
 }
