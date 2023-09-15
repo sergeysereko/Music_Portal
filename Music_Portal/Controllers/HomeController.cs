@@ -199,5 +199,66 @@ namespace Music_Portal.Controllers
 
         }
 
+
+
+        [HttpGet]
+        public async Task<IActionResult> EditSinger(int? id)
+        {
+            if (id == null || db.Singers == null)
+            {
+                return NotFound();
+            }
+
+            var singer = await db.Singers.FindAsync(id);
+            if (singer == null)
+            {
+                return NotFound();
+            }
+            return View(singer);
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditSinger(int id, [Bind("Id,Name,Music_file")] Singer singer)
+        {
+            if (id != singer.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    db.Update(singer);
+                    await db.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StyleExists(singer.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Singers");
+            }
+            return View(singer);
+        }
+
+        private bool SingerExists(int id)
+        {
+            return (db.Singers?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+
+
+
+
     }
 }
