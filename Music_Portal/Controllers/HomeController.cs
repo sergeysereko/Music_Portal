@@ -257,7 +257,42 @@ namespace Music_Portal.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> DeleteSinger(int? id)
+        {
+            if (id == null || db.Singers == null)
+            {
+                return NotFound();
+            }
 
+            var singer = await db.Singers.FirstOrDefaultAsync(m => m.Id == id);
+            if (singer == null)
+            {
+                return NotFound();
+            }
+
+            return View(singer);
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteSinger(int id)
+        {
+            if (db.Singers == null)
+            {
+                return Problem("Entity set 'MusicPortalContext.Singer'  is null.");
+            }
+            var singer = await db.Singers.FindAsync(id);
+            if (singer != null)
+            {
+                db.Singers.Remove(singer);
+            }
+
+            await db.SaveChangesAsync();
+            return RedirectToAction("Singers");
+        }
 
 
     }
