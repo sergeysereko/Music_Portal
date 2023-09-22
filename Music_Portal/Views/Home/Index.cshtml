@@ -1,8 +1,54 @@
-﻿@{
+﻿
+@model List<MusicFileShow>
+@{
     ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div >
+
+    @{
+        string currentSingerName = null;
+        string currentStyleName = null;
+    }
+        @foreach (var musicViewModel in Model)
+        {
+            
+            if (musicViewModel.SingerName != currentSingerName)
+            {
+                
+                <label>@musicViewModel.SingerName</label>
+                currentSingerName = musicViewModel.SingerName;
+            }
+
+            if (musicViewModel.StyleName != currentStyleName)
+            {   <span> - </span>
+                <label>@musicViewModel.StyleName</label>
+                currentStyleName = musicViewModel.StyleName;
+                
+            }
+        <div style ="display: flex; justify-content: start; align-items: center; margin-bottom:5px;">
+            <div style="width:300px">
+                <label>@musicViewModel.MusicFileName</label>
+                <span> - </span>
+                <label>@musicViewModel.MusicFileSize</label>
+            </div>
+            <audio controls style="width:650px" >
+                <source src="@musicViewModel.MusicFilePath" type="audio/mpeg">
+            </audio>
+            @if (Context.Session.GetString("login") != null)
+            {
+           <span>&nbsp;&nbsp;&nbsp;</span>
+            <a asp-action="EditMusicFile" asp-route-id="@musicViewModel.MusicFileId" class="links" style="display:inline">Редактировать</a><span>|</span>
+            <a asp-action="DeleteMusicFile" asp-route-id="@musicViewModel.MusicFileId" class="links" style="display:inline">Удалить</a>
+            }
+           
+        </div>
+             
+                 
+        }
+    
+ 
+
 </div>
+ 

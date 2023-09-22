@@ -1,0 +1,60 @@
+﻿
+@model Music_Portal.Models.MusicFile_View
+@{
+    ViewData["Title"] = "CreateMusicFile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3 style="text-align: center;">Добавление музыкального файла</h3>
+<hr />
+<div class="row justify-content-center">
+    <div class="col-md-4">
+
+        <form asp-action="CreateMusicFile" method="post" asp-controller="Home" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">Название</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Id_Singer" class="control-label">Исполнитель</label>
+                <select asp-for="Id_Singer" asp-items="@ViewBag.SingerList" class="form-control">
+                    <option value="">Выберите исполнителя</option>    
+                </select>
+                <span asp-validation-for="Id_Singer" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Id_Style" class="control-label">Стиль</label>
+                <select asp-for="Id_Style" asp-items="@ViewBag.StyleList" class="form-control">
+                    <option value="">Выберите стиль музыки</option>         
+                </select>
+                <span asp-validation-for="Id_Style" class="text-danger"></span>
+            </div>
+           @*  <div class="form-group">
+                <label asp-for="Comment" class="control-label">Комментарий</label>
+                <input asp-for="Comment" class="form-control" />
+                <span asp-validation-for="Comment" class="text-danger"></span>
+            </div> *@
+            <br />
+            <div class="form-group">
+                    <label asp-for="FileMp3" class="control-label">Муз.Файл</label>
+                    <input type="file" name="FileMp3" />
+                    <br>
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Добавить" class="btn btn-primary" />
+            </div>
+        </form>
+
+    </div>
+</div>
+<div>
+    <a asp-action="Index" class="links">Вернуться на Главную</a>
+</div>
+@*  @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}  *@

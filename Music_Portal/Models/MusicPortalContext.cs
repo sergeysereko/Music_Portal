@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 
 
-
 namespace Music_Portal.Models
 {
 

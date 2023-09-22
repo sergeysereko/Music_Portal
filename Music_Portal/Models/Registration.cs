@@ -6,12 +6,16 @@ namespace Music_Portal.Models
     {
 
         [Required]
+
+        [Display(Name = "Имя")]
         public string? FirstName { get; set; }
 
         [Required]
+        [Display(Name = "Фамилия")]
         public string? LastName { get; set; }
 
         [Required]
+        [Display(Name = "Логин")]
         public string? Login { get; set; }
 
         [Required]
