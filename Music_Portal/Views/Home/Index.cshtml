@@ -36,10 +36,10 @@
             <audio controls style="width:650px" >
                 <source src="@musicViewModel.MusicFilePath" type="audio/mpeg">
             </audio>
-            @if (Context.Session.GetString("login") != null)
+            @if (Context.Session.GetString("login") != null && Context.Session.GetString("Access") == "1")
             {
            <span>&nbsp;&nbsp;&nbsp;</span>
-            <a asp-action="EditMusicFile" asp-route-id="@musicViewModel.MusicFileId" class="links" style="display:inline">Редактировать</a><span>|</span>
+            <a asp-action="EditMusicFile" asp-route-id="@musicViewModel.MusicFileId" class="links" style="display:inline">Редактировать</a><span>&nbsp;|&nbsp;</span>
             <a asp-action="DeleteMusicFile" asp-route-id="@musicViewModel.MusicFileId" class="links" style="display:inline">Удалить</a>
             }
            

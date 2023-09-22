@@ -31,16 +31,11 @@
                 </select>
                 <span asp-validation-for="Id_Style" class="text-danger"></span>
             </div>
-           @*  <div class="form-group">
-                <label asp-for="Comment" class="control-label">Комментарий</label>
-                <input asp-for="Comment" class="form-control" />
-                <span asp-validation-for="Comment" class="text-danger"></span>
-            </div> *@
             <br />
             <div class="form-group">
-                    <label asp-for="FileMp3" class="control-label">Муз.Файл</label>
-                    <input type="file" name="FileMp3" />
-                    <br>
+                <label asp-for="FileMp3" class="control-label">Муз.Файл</label>
+                <input asp-for="FileMp3" type="file" class="form-control" />
+                <span asp-validation-for="FileMp3" class="text-danger"></span>
             </div>
             <br />
             <div class="form-group">
@@ -53,8 +48,8 @@
 <div>
     <a asp-action="Index" class="links">Вернуться на Главную</a>
 </div>
-@*  @section Scripts {
+ @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-}  *@
+} 

@@ -347,22 +347,22 @@ namespace Music_Portal.Controllers
 
             if (FileMp3 != null)
             {
-               
-                string path = "/File/" + FileMp3.FileName; 
+
+                string path = "/File/" + FileMp3.FileName;
                 using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
                 {
-                    await FileMp3.CopyToAsync(fileStream); 
+                    await FileMp3.CopyToAsync(fileStream);
                 }
 
                 Music_file musicfile = new Music_file();
-     
+
                 musicfile.Name = mfile.Name;
                 musicfile.Id_Singer = mfile.Id_Singer;
                 musicfile.Id_Style = mfile.Id_Style;
-                musicfile.Size = (((int)FileMp3.Length)/1000000).ToString() + " Mb";
+                musicfile.Size = (((int)FileMp3.Length) / 1000000).ToString() + " Mb";
                 musicfile.Rating = 0;
                 musicfile.File = path;
-                
+
 
                 string login = HttpContext.Session.GetString("login");
                 if (!string.IsNullOrEmpty(login))
@@ -383,10 +383,10 @@ namespace Music_Portal.Controllers
                 {
                     musicfile.Singer = singer;
                 }
-       
-                    db.Add(musicfile);
-                    await db.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+
+                db.Add(musicfile);
+                await db.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
 
             }
 
@@ -395,5 +395,99 @@ namespace Music_Portal.Controllers
         }
 
 
+
+        [HttpGet]
+        public async Task<IActionResult> EditMusicFile(int? id)
+        {
+
+            if (id == null || db.Music_files == null)
+            {
+                return NotFound();
+            }
+
+
+            var musicFile = await db.Music_files.FindAsync(id);
+            if (musicFile == null)
+            {
+                return NotFound();
+            }
+
+            var styles = db.Styles.ToList();
+            var singers = db.Singers.ToList();
+
+            int selectedSingerId = musicFile.Id_Singer;
+            int selectedStyleId = musicFile.Id_Style;
+            ViewBag.StyleList = new SelectList(styles, "Id", "Name", selectedStyleId);
+            ViewBag.SingerList = new SelectList(singers, "Id", "Name", selectedSingerId);
+
+            var musicFileShow = new MusicFileShow
+            {
+                MusicFileId = musicFile.Id,
+                MusicFileName = musicFile.Name,
+                MusicFileSize = musicFile.Size,
+                MusicFilePath = musicFile.File
+            };
+
+            return View(musicFileShow);
+
+        }
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> EditMusicFile(IFormFile MusicFilePath, [Bind("MusicFileName,MusicFileSize,StyleName,SingerName,MusicFilePath,MusicFileId")] MusicFileShow mfile)
+        {
+            if (MusicFilePath != null)
+            {
+
+                string path = "/File/" + MusicFilePath.FileName;
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                {
+                    await MusicFilePath.CopyToAsync(fileStream);
+                }
+
+                Music_file musicfile = new Music_file();
+
+                musicfile.Id = mfile.MusicFileId;
+                musicfile.Name = mfile.MusicFileName;
+                musicfile.Size = (((int)MusicFilePath.Length) / 1000000).ToString() + " Mb";
+                musicfile.Rating = 0;
+                musicfile.File = path;
+                int StyleId = int.Parse(mfile.StyleName);
+                int SingerId = int.Parse(mfile.SingerName);
+
+                string login = HttpContext.Session.GetString("login");
+                if (!string.IsNullOrEmpty(login))
+                {
+                    User? user = await db.Users.FirstOrDefaultAsync(u => u.Name == login);
+                    musicfile.Id_User = user.Id;
+                    musicfile.User = user;
+                }
+
+                Style style = await db.Styles.FirstOrDefaultAsync(u => u.Id == StyleId);
+                if (style != null)
+                {
+                    musicfile.Style = style;
+                    musicfile.Id_Style = style.Id;
+                }
+
+                Singer singer = await db.Singers.FirstOrDefaultAsync(u => u.Id == SingerId);
+                if (singer != null)
+                {
+                    musicfile.Singer = singer;
+                    musicfile.Id_Singer = singer.Id;
+                }
+
+                db.Update(musicfile);
+                await db.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+
+            }
+
+            return View(mfile);
+
+        }
     }
+
 }

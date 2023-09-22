@@ -1,0 +1,53 @@
+﻿@model Music_Portal.Models.MusicFileShow
+@{
+    ViewData["Title"] = "EditMusicFile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3 style="text-align: center;">Редактирование музыкального файла</h3>
+<hr />
+<div class="row justify-content-center">
+    <div class="col-md-4">
+
+        <form asp-action="EditMusicFile" method="post" asp-controller="Home" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MusicFileId" />
+            <div class="form-group">
+                <label asp-for="MusicFileName" class="control-label">Название</label>
+                <input asp-for="MusicFileName" class="form-control" />
+                <span asp-validation-for="MusicFileName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SingerName" class="control-label">Исполнитель</label>
+                @Html.DropDownListFor(model => model.SingerName, ViewBag.SingerList as SelectList, "Выберите исполнителя", new { @class = "form-control" })
+                <span asp-validation-for="SingerName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="StyleName" class="control-label">Стиль</label>
+                @Html.DropDownListFor(model => model.StyleName, ViewBag.StyleList as SelectList, "Выберите стиль", new { @class = "form-control" })
+                <span asp-validation-for="StyleName" class="text-danger"></span>
+            </div>
+
+            <br />
+            <div class="form-group">
+                <label asp-for="MusicFilePath" class="control-label">Муз.Файл</label>
+                <input asp-for="MusicFilePath" type="file" class="form-control" />
+                <span asp-validation-for="MusicFilePath" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Добавить" class="btn btn-primary" />
+            </div>
+        </form>
+
+    </div>
+</div>
+<div>
+    <a asp-action="Index" class="links">Вернуться на Главную</a>
+</div>
+  @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}  
