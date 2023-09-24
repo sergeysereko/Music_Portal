@@ -4,9 +4,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Удаление участника</h1>
-<h3>Вы уверены, что хотите удалить участника?</h3>
-<div>
+<h3>Удаление участника</h3>
+<h5>Вы уверены, что хотите удалить участника?</h5>
+<div">
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -32,7 +32,7 @@
     <form asp-action="DeleteUser">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Удалить" class="btn btn-danger" /> |
-        <a asp-action="Index" class="links">Вернуться на главную</a>
+        <a asp-action="Index" class="links"> Вернуться на главную</a>
     </form>
 </div>
 

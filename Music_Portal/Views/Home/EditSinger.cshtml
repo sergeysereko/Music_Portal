@@ -5,11 +5,11 @@
 }
 
 
-<h1>Редактирование Исполнителя</h1>
+<h3 class="namedoc">Редактирование Исполнителя</h3>
 <hr />
-<div class="row">
+<div class="row justify-content-center">
     <div class="col-md-4">
-        <form asp-action="EditSinger">
+        <form asp-action="EditSinger" method="post" asp-controller="Home" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -17,7 +17,11 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-
+            <div class="form-group">
+                <label asp-for="Poster" class="control-label">Постер исполнителя</label>
+                <input asp-for="Poster" type="file" class="form-control" />
+                <span asp-validation-for="Poster" class="text-danger"></span>
+            </div>
             <br />
             <div class="form-group">
                 <input type="submit" value="Сохранить изменения" class="btn btn-primary" />

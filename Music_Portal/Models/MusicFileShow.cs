@@ -19,6 +19,8 @@ namespace Music_Portal.Models
         [Display(Name = "Путь к файлу")]
         public string MusicFilePath { get; set; }
 
+        [Display(Name = "Постер исполнителя")]
+        public string SingerPoster { get; set; }
 
         public int MusicFileId { get; set; }
     }

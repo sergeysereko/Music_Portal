@@ -32,7 +32,11 @@ namespace Music_Portal.Controllers
             using (var dbc = db)
             {
                 var musicFiles = dbc.Music_files.Include(m => m.Style).Include(m => m.Singer).ToList();
+                
+                var singerIds = musicFiles.Select(musicFile => musicFile.Id_Singer).Distinct();
+                var singerPosters = await dbc.Singers.Where(singer => singerIds.Contains(singer.Id)).ToDictionaryAsync(singer => singer.Id, singer => singer.Poster);
 
+                ;
                 foreach (var musicFile in musicFiles)
                 {
                     var music = new MusicFileShow
@@ -42,7 +46,9 @@ namespace Music_Portal.Controllers
                         StyleName = musicFile.Style?.Name,
                         SingerName = musicFile.Singer?.Name,
                         MusicFilePath = musicFile.File,
-                        MusicFileId = musicFile.Id
+                        MusicFileId = musicFile.Id,
+                        SingerPoster = singerPosters.ContainsKey(musicFile.Id_Singer) ? singerPosters[musicFile.Id_Singer] : null
+
                     };
 
                     musicFileShows.Add(music);
@@ -52,10 +58,12 @@ namespace Music_Portal.Controllers
             return View(musicFileShows);
         }
 
+
         public IActionResult Privacy()
         {
             return View();
         }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
@@ -214,8 +222,21 @@ namespace Music_Portal.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateSinger(Singer singer)
+        public async Task<IActionResult> CreateSinger(IFormFile Poster, [Bind("Id,Name,Poster")] Singer singer)
         {
+            if (Poster != null)
+            {
+
+                string path = "/Image/" + TransliterateToLatin(Poster.FileName);
+
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                {
+                    await Poster.CopyToAsync(fileStream);
+                }
+
+                singer.Poster = "~" + path;
+                
+            }
 
             if (ModelState.IsValid)
             {
@@ -228,7 +249,7 @@ namespace Music_Portal.Controllers
             {
                 return View(singer);
             }
-
+           
         }
 
 
@@ -253,11 +274,22 @@ namespace Music_Portal.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditSinger(int id, [Bind("Id,Name,Music_file")] Singer singer)
+        public async Task<IActionResult> EditSinger(IFormFile Poster, int id, [Bind("Id,Name,Poster")] Singer singer)
         {
             if (id != singer.Id)
             {
                 return NotFound();
+            }
+            if (Poster != null)
+            {
+                string path = "/Image/" + TransliterateToLatin(Poster.FileName);
+
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                {
+                    await Poster.CopyToAsync(fileStream);
+                }
+
+                singer.Poster = path;
             }
 
             if (ModelState.IsValid)

@@ -10,30 +10,39 @@
     @{
         string currentSingerName = null;
         string currentStyleName = null;
+        string currentSingerPoster = null;
     }
         @foreach (var musicViewModel in Model)
         {
+       
+            if (musicViewModel.SingerPoster != currentSingerPoster)
+            {
+             
+            <div class="image"><img class="img" src="@Url.Content(@musicViewModel.SingerPoster)" alt="@musicViewModel.SingerName"></div>  
+            currentSingerPoster = musicViewModel.SingerPoster;
+
+            }
             
             if (musicViewModel.SingerName != currentSingerName)
             {
-                
-                <label>@musicViewModel.SingerName</label>
+                <label class="singer">@musicViewModel.SingerName</label>
                 currentSingerName = musicViewModel.SingerName;
             }
 
             if (musicViewModel.StyleName != currentStyleName)
             {   <span> - </span>
-                <label>@musicViewModel.StyleName</label>
+                <label class="stylename">@musicViewModel.StyleName</label>
                 currentStyleName = musicViewModel.StyleName;
-                
-            }
+            } 
+         
+
         <div style ="display: flex; justify-content: start; align-items: center; margin-bottom:5px;">
             <div style="width:300px">
-                <label>@musicViewModel.MusicFileName</label>
+                <label class="sing">@musicViewModel.MusicFileName</label>
                 <span> - </span>
-                <label>@musicViewModel.MusicFileSize</label>
+                <label class="size">@musicViewModel.MusicFileSize</label>
             </div>
-            <audio controls style="width:650px" >
+            <audio controls class="custom-audio-player">
                 <source src="@musicViewModel.MusicFilePath" type="audio/mpeg">
             </audio>
             @if (Context.Session.GetString("login") != null && Context.Session.GetString("Access") == "1")

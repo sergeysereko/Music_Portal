@@ -19,7 +19,8 @@ namespace Music_Portal.Models
         [Required(ErrorMessage = "Поле обязательно для заполнения!")]
         [Display(Name = "Исполнитель")]
         public string Name { get; set; }
-
+        public string? Poster { get; set; }
+        
         public ICollection<Music_file> Music_file { get; set; }
     }
 }

@@ -19,5 +19,6 @@ namespace Music_Portal.Models
         [Required(ErrorMessage = "Поле обязательно для заполнения!")]
         [Display(Name = "Описание трека")]
         public string? FileMp3 { get; set; }
+   
     }
 }
