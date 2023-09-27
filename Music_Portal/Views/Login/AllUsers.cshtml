@@ -1,4 +1,4 @@
-﻿@model Music_Portal.Models.User
+﻿@model MusicPortal.DAL.Models.User
 @{
     ViewData["Title"] = "AllUsers";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -34,8 +34,8 @@
                     @item.Access
                 </td>
                 <td>
-                    <a asp-action="EditAccess" asp-route-id="@item.Id" class="links">Редактировать доступ</a> |
-                    <a asp-action="DeleteUser" asp-route-id="@item.Id" class="links">Удалить участника</a>
+                    <a asp-action="EditAccess" asp-route-id="@item.Id" class="btn btn-primary">Редактировать доступ</a> |
+                    <a asp-action="DeleteUser" asp-route-id="@item.Id" class="btn btn-danger">Удалить участника</a>
                 </td>
             </tr>
         }

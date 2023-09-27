@@ -16,4 +16,8 @@
     <Folder Include="wwwroot\Image\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MusicPortal.DAL\MusicPortal.DAL.csproj" />
+  </ItemGroup>
+
 </Project>

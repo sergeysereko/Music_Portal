@@ -8,6 +8,10 @@ using Music_Portal.Models;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
+using MusicPortal.DAL.Context;
+using MusicPortal.DAL.Models;
+using MusicPortal.DAL.Interfaces;
+using MusicPortal.DAL.Repositories;
 
 
 namespace Music_Portal.Controllers

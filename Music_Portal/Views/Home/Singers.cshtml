@@ -1,4 +1,4 @@
-﻿@model Music_Portal.Models.Singer
+﻿@model MusicPortal.DAL.Models.Singer
 @{
     ViewData["Title"] = "Singers";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -32,8 +32,8 @@
                     @item.Name
                 </td>
                 <td>
-                    <a asp-action="EditSinger" asp-route-id="@item.Id" class="links">Редактировать</a> |
-                    <a asp-action="DeleteSinger" asp-route-id="@item.Id" class="links">Удалить</a>
+                    <a asp-action="EditSinger" asp-route-id="@item.Id" class="btn btn-primary">Редактировать</a> |
+                    <a asp-action="DeleteSinger" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
                 </td>
             </tr>
         }

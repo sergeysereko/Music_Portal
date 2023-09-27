@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Music_Portal.Models;
 using Music_Portal;
 using Microsoft.AspNetCore.Http.Features;
+using MusicPortal.DAL.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 

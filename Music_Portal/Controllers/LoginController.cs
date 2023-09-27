@@ -3,6 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using Music_Portal.Models;
 using System.Security.Cryptography;
 using System.Text;
+using MusicPortal.DAL.Context;
+using MusicPortal.DAL.Interfaces;
+using MusicPortal.DAL.Models;
+using MusicPortal.DAL.Repositories;
 
 namespace Music_Portal.Controllers
 {
