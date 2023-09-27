@@ -17,6 +17,7 @@ namespace MusicPortal.BLL.DTO
         [Display(Name = "Название: ")]
         public string Name { get; set; }
 
-        
+           
+
     }
 }
