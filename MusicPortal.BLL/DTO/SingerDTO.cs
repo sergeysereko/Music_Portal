@@ -14,10 +14,9 @@ namespace MusicPortal.BLL.DTO
         [Required(ErrorMessage = "Поле должно быть установлено.")]
         [Display(Name = "Название: ")]
         public string Name { get; set; }
-        [Required(ErrorMessage = "Поле должно быть установлено.")]
+        
         [Display(Name = "Постер исполнителя: ")]
         public string? Poster { get; set; }
 
-       
     }
 }

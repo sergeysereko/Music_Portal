@@ -22,14 +22,15 @@ namespace Music_Portal.Controllers
         private readonly IMusicFileService musicFileService;
         private readonly ISingerService singerService;
         private readonly IStyleService styleService;
+        IWebHostEnvironment _appEnvironment;
 
 
-
-        public HomeController(IMusicFileService mfserv, ISingerService singerserv, IStyleService styleserv)
+        public HomeController(IMusicFileService mfserv, ISingerService singerserv, IStyleService styleserv, IWebHostEnvironment appEnvironment)
         {
             musicFileService = mfserv;
             singerService = singerserv;
             styleService = styleserv;
+            _appEnvironment = appEnvironment;
         }
 
 
@@ -124,7 +125,7 @@ namespace Music_Portal.Controllers
         public async Task<IActionResult> EditStyle(int id)
         {
             
-            if (id == null || styleService.GetStyles() == null)
+            if (id == null || await styleService.GetStyles() == null)
             {
                 return NotFound();
             }
@@ -185,7 +186,7 @@ namespace Music_Portal.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteStyleView(int id)
         {
-            if (id == null || styleService.GetStyles() == null)
+            if (id == null || await styleService.GetStyles() == null)
             {
                 return NotFound();
             }
@@ -220,173 +221,171 @@ namespace Music_Portal.Controllers
         }
 
 
-        //public async Task<IActionResult> Singers()
-        //{
-        //    IEnumerable<Singer> singer = await Task.Run(() => db.Singers);
-        //    ViewBag.Singers = singer;
-        //    return View();
-        //}
+        public async Task<IActionResult> Singers()
+        { 
+            var singer = await singerService.GetSingers();
+            ViewBag.Singers = singer;
+            return View();
+        }
 
 
 
-        //    [HttpGet]
-        //    public async Task<IActionResult> CreateSinger()
-        //    {
-        //        return View();
-        //    }
+        [HttpGet]
+        public async Task<IActionResult> CreateSinger()
+        {
+            return View();
+        }
 
 
-        //    [HttpPost]
-        //    [ValidateAntiForgeryToken]
-        //    public async Task<IActionResult> CreateSinger(IFormFile Poster, [Bind("Id,Name,Poster")] Singer singer)
-        //    {
-        //        if (Poster != null)
-        //        {
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateSinger(IFormFile Poster, [Bind("Id,Name,Poster")] SingerDTO singer)
+        {
+            if (Poster != null)
+            {
 
-        //            string path = "/Image/" + TransliterateToLatin(Poster.FileName);
+                string path = "/Image/" + TransliterateToLatin(Poster.FileName);
 
-        //            using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-        //            {
-        //                await Poster.CopyToAsync(fileStream);
-        //            }
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                {
+                    await Poster.CopyToAsync(fileStream);
+                }
 
-        //            singer.Poster = "~" + path;
+                singer.Poster = "~" + path;
 
-        //        }
+            }
 
-        //        if (ModelState.IsValid)
-        //        {
+            if (ModelState.IsValid)
+            {
+                await singerService.CreateSinger(singer);
+                return RedirectToAction("Singers");
+            }
+            else
+            {
+                return View(singer);
+            }
 
-        //            db.Add(singer);
-        //            db.SaveChangesAsync();
-        //            return RedirectToAction("Singers");
-        //        }
-        //        else
-        //        {
-        //            return View(singer);
-        //        }
-
-        //    }
-
-
-
-        //    [HttpGet]
-        //    public async Task<IActionResult> EditSinger(int? id)
-        //    {
-        //        if (id == null || db.Singers == null)
-        //        {
-        //            return NotFound();
-        //        }
-
-        //        var singer = await db.Singers.FindAsync(id);
-        //        if (singer == null)
-        //        {
-        //            return NotFound();
-        //        }
-        //        return View(singer);
-        //    }
+        }
 
 
 
-        //    [HttpPost]
-        //    [ValidateAntiForgeryToken]
-        //    public async Task<IActionResult> EditSinger(IFormFile Poster, int id, [Bind("Id,Name,Poster")] Singer singer)
-        //    {
-        //        if (id != singer.Id)
-        //        {
-        //            return NotFound();
-        //        }
-        //        if (Poster != null)
-        //        {
-        //            string path = "/Image/" + TransliterateToLatin(Poster.FileName);
+        [HttpGet]
+        public async Task<IActionResult> EditSinger(int id)
+        {
+            if (id == null || await singerService.GetSingers() == null)
+            {
+                return NotFound();
+            }
 
-        //            using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-        //            {
-        //                await Poster.CopyToAsync(fileStream);
-        //            }
-
-        //            singer.Poster = path;
-        //        }
-
-        //        if (ModelState.IsValid)
-        //        {
-        //            try
-        //            {
-        //                db.Update(singer);
-        //                await db.SaveChangesAsync();
-        //            }
-        //            catch (DbUpdateConcurrencyException)
-        //            {
-        //                if (!StyleExists(singer.Id))
-        //                {
-        //                    return NotFound();
-        //                }
-        //                else
-        //                {
-        //                    throw;
-        //                }
-        //            }
-        //            return RedirectToAction("Singers");
-        //        }
-        //        return View(singer);
-        //    }
-
-        //    private bool SingerExists(int id)
-        //    {
-        //        return (db.Singers?.Any(e => e.Id == id)).GetValueOrDefault();
-        //    }
-
-
-        //    [HttpGet]
-        //    public async Task<IActionResult> DeleteSinger(int? id)
-        //    {
-        //        if (id == null || db.Singers == null)
-        //        {
-        //            return NotFound();
-        //        }
-
-        //        var singer = await db.Singers.FirstOrDefaultAsync(m => m.Id == id);
-        //        if (singer == null)
-        //        {
-        //            return NotFound();
-        //        }
-
-        //        return View(singer);
-        //    }
+            var singer = await singerService.GetSinger(id);
+           
+            if (singer == null)
+            {
+                return NotFound();
+            }
+            return View(singer);
+        }
 
 
 
-        //    [HttpPost]
-        //    [ValidateAntiForgeryToken]
-        //    public async Task<IActionResult> DeleteSinger(int id)
-        //    {
-        //        if (db.Singers == null)
-        //        {
-        //            return Problem("Entity set 'MusicPortalContext.Singer'  is null.");
-        //        }
-        //        var singer = await db.Singers.FindAsync(id);
-        //        if (singer != null)
-        //        {
-        //            db.Singers.Remove(singer);
-        //        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditSinger(IFormFile Poster, int id, [Bind("Id,Name,Poster")] SingerDTO singer)
+        {
+            if (id != singer.Id)
+            {
+                return NotFound();
+            }
+            if (Poster != null)
+            {
+                string path = "/Image/" + TransliterateToLatin(Poster.FileName);
 
-        //        await db.SaveChangesAsync();
-        //        return RedirectToAction("Singers");
-        //    }
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                {
+                    await Poster.CopyToAsync(fileStream);
+                }
+
+                singer.Poster = path;
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await singerService.UpdateSinger(singer);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!SingerExists(singer.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Singers");
+            }
+            return View(singer);
+        }
+
+        private bool SingerExists(int id)
+        {
+            var singers = singerService.GetSingers().GetAwaiter().GetResult();
+            return singers.Any(singer => singer.Id == id);  
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteSingerView(int id)
+        {
+            if (id == null || await singerService.GetSingers() == null)
+            {
+                return NotFound();
+            }
+            var singer = await singerService.GetSinger(id);  
+            if (singer == null)
+            {
+                return NotFound();
+            }
+
+            return View(singer);
+        }
 
 
 
-        //    [HttpGet]
-        //    public IActionResult CreateMusicFile()
-        //    {
-        //        var styles = db.Styles.ToList();
-        //        var singers = db.Singers.ToList();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteSinger(int id)
+        {
+            if (await singerService.GetSingers() == null)
+            {
+                return Problem("Entity set 'MusicPortalContext.Singer'  is null.");
+            }
+            var singer = await singerService.GetSinger(id); 
+            if (singer != null)
+            {
+                await singerService.DeleteSinger(id);
+            }
+            return RedirectToAction("Singers");
+        }
 
-        //        ViewBag.StyleList = new SelectList(styles, "Id", "Name");
-        //        ViewBag.SingerList = new SelectList(singers, "Id", "Name");
 
-        //        return View("CreateMusicFile");
-        //    }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateMusicFile()
+        {
+            //var styles = db.Styles.ToList();
+            //var singers = db.Singers.ToList();
+            var styles = await styleService.GetStyles();
+            var singers = await singerService.GetSingers();
+;
+            ViewBag.StyleList = new SelectList(styles, "Id", "Name");
+            ViewBag.SingerList = new SelectList(singers, "Id", "Name");
+
+            return View("CreateMusicFile");
+        }
 
 
 
@@ -596,38 +595,38 @@ namespace Music_Portal.Controllers
 
 
 
-        //    public static string TransliterateToLatin(string input)
-        //    {
-        //        Dictionary<char, string> transliteration = new Dictionary<char, string>
-        //{
-        //    {'а', "a"}, {'б', "b"}, {'в', "v"}, {'г', "g"}, {'д', "d"}, {'е', "e"}, {'ё', "yo"},
-        //    {'ж', "zh"}, {'з', "z"}, {'и', "i"}, {'й', "y"}, {'к', "k"}, {'л', "l"}, {'м', "m"},
-        //    {'н', "n"}, {'о', "o"}, {'п', "p"}, {'р', "r"}, {'с', "s"}, {'т', "t"}, {'у', "u"},
-        //    {'ф', "f"}, {'х', "kh"}, {'ц', "ts"}, {'ч', "ch"}, {'ш', "sh"}, {'щ', "sch"}, {'ъ', ""},
-        //    {'ы', "y"}, {'ь', ""}, {'э', "e"}, {'ю', "yu"}, {'я', "ya"},
-        //    {'А', "A"}, {'Б', "B"}, {'В', "V"}, {'Г', "G"}, {'Д', "D"}, {'Е', "E"}, {'Ё', "Yo"},
-        //    {'Ж', "Zh"}, {'З', "Z"}, {'И', "I"}, {'Й', "Y"}, {'К', "K"}, {'Л', "L"}, {'М', "M"},
-        //    {'Н', "N"}, {'О', "O"}, {'П', "P"}, {'Р', "R"}, {'С', "S"}, {'Т', "T"}, {'У', "U"},
-        //    {'Ф', "F"}, {'Х', "Kh"}, {'Ц', "Ts"}, {'Ч', "Ch"}, {'Ш', "Sh"}, {'Щ', "Sch"}, {'Ъ', ""},
-        //    {'Ы', "Y"}, {'Ь', ""}, {'Э', "E"}, {'Ю', "Yu"}, {'Я', "Ya"}
-        //};
+        public static string TransliterateToLatin(string input)
+        {
+            Dictionary<char, string> transliteration = new Dictionary<char, string>
+        {
+            {'а', "a"}, {'б', "b"}, {'в', "v"}, {'г', "g"}, {'д', "d"}, {'е', "e"}, {'ё', "yo"},
+            {'ж', "zh"}, {'з', "z"}, {'и', "i"}, {'й', "y"}, {'к', "k"}, {'л', "l"}, {'м', "m"},
+            {'н', "n"}, {'о', "o"}, {'п', "p"}, {'р', "r"}, {'с', "s"}, {'т', "t"}, {'у', "u"},
+            {'ф', "f"}, {'х', "kh"}, {'ц', "ts"}, {'ч', "ch"}, {'ш', "sh"}, {'щ', "sch"}, {'ъ', ""},
+            {'ы', "y"}, {'ь', ""}, {'э', "e"}, {'ю', "yu"}, {'я', "ya"},
+            {'А', "A"}, {'Б', "B"}, {'В', "V"}, {'Г', "G"}, {'Д', "D"}, {'Е', "E"}, {'Ё', "Yo"},
+            {'Ж', "Zh"}, {'З', "Z"}, {'И', "I"}, {'Й', "Y"}, {'К', "K"}, {'Л', "L"}, {'М', "M"},
+            {'Н', "N"}, {'О', "O"}, {'П', "P"}, {'Р', "R"}, {'С', "S"}, {'Т', "T"}, {'У', "U"},
+            {'Ф', "F"}, {'Х', "Kh"}, {'Ц', "Ts"}, {'Ч', "Ch"}, {'Ш', "Sh"}, {'Щ', "Sch"}, {'Ъ', ""},
+            {'Ы', "Y"}, {'Ь', ""}, {'Э', "E"}, {'Ю', "Yu"}, {'Я', "Ya"}
+        };
 
-        //        StringBuilder result = new StringBuilder(input.Length);
+            StringBuilder result = new StringBuilder(input.Length);
 
-        //        foreach (char c in input)
-        //        {
-        //            if (transliteration.TryGetValue(c, out string transliteratedChar))
-        //            {
-        //                result.Append(transliteratedChar);
-        //            }
-        //            else
-        //            {
-        //                result.Append(c);
-        //            }
-        //        }
+            foreach (char c in input)
+            {
+                if (transliteration.TryGetValue(c, out string transliteratedChar))
+                {
+                    result.Append(transliteratedChar);
+                }
+                else
+                {
+                    result.Append(c);
+                }
+            }
 
-        //        return result.ToString();
-        //    }
+            return result.ToString();
+        }
 
 
     }
