@@ -12,7 +12,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MusicPortal.BLL.Services
 {
-    public class SingerService
+    public class SingerService:ISingerService
     {
         IUnitOfWork Database { get; set; }
 

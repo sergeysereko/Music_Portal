@@ -12,7 +12,7 @@ namespace MusicPortal.BLL.Interfaces
         Task CreateStyle(StyleDTO styleDto);
         Task UpdateStyle(StyleDTO styleDto);
         Task DeleteStyle(int id);
-        Task<SingerDTO> GetStyle(int id);
-        Task<IEnumerable<SingerDTO>> GetStyles();
+        Task<StyleDTO> GetStyle(int id);
+        Task<IEnumerable<StyleDTO>> GetStyles();
     }
 }

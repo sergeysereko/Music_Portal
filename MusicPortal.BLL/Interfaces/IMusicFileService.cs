@@ -13,6 +13,6 @@ namespace MusicPortal.BLL.Interfaces
         Task UpdateMusicFile(Music_FileDTO mfDto);
         Task DeleteMusicFile(int id);
         Task<Music_FileDTO> GetMusicFile(int id);
-        Task<IEnumerable<Music_FileDTO>> GetMusicFiles();
+        Task<IEnumerable<Music_FileDTO>> GetMusicFiles();    
     }
 }

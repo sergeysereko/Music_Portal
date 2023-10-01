@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using MusicPortal.BLL.Interfaces;
 using MusicPortal.BLL.DTO;
 using MusicPortal.DAL.Models;
+using MusicPortal.BLL.Services;
 using AutoMapper;
 using MusicPortal.DAL.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace MusicPortal.BLL.Services
 {
-    public class StyleService
+    public class StyleService : IStyleService
     {
         IUnitOfWork Database { get; set; }
 
@@ -62,6 +63,7 @@ namespace MusicPortal.BLL.Services
                 Name = style.Name            
             };
         }
+
 
         public async Task<IEnumerable<StyleDTO>> GetStyles()
         {

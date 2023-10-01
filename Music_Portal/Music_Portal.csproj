@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MusicPortal.DAL\MusicPortal.DAL.csproj" />
+    <ProjectReference Include="..\MusicPortal.BLL\MusicPortal.BLL.csproj" />
   </ItemGroup>
 
 </Project>

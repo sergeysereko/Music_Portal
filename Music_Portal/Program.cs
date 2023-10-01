@@ -2,18 +2,25 @@ using Microsoft.EntityFrameworkCore;
 using Music_Portal.Models;
 using Music_Portal;
 using Microsoft.AspNetCore.Http.Features;
-using MusicPortal.DAL.Context;
+
+using MusicPortal.BLL.Interfaces;
+using MusicPortal.BLL.Services;
+using MusicPortal.BLL.Infrastructure;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 // Получаем строку подключения из файла конфигурации
 string? connection = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddMusicPortalContext(connection);
+builder.Services.AddUnitOfWorkService();
+builder.Services.AddTransient<IMusicFileService, MusicFileService>();
+builder.Services.AddTransient<ISingerService, SingerService>();
+builder.Services.AddTransient<IStyleService, StyleService>();
+builder.Services.AddTransient<IUserService, UserService>();
 
-
-
-// добавляем контекст ApplicationContext в качестве сервиса в приложение
-builder.Services.AddDbContext<MusicPortalContext>(options => options.UseSqlServer(connection));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

@@ -1,4 +1,4 @@
-﻿@model MusicPortal.DAL.Models.Style
+﻿@model MusicPortal.BLL.DTO.StyleDTO
 @{
     ViewData["Title"] = "Styles";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -34,7 +34,7 @@
                 </td>
                 <td>
                     <a asp-action="EditStyle" asp-route-id="@item.Id" class="btn btn-primary">Редактировать</a> |
-                    <a asp-action="DeleteStyle" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
+                    <a asp-action="DeleteStyleView" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
                 </td>
             </tr>
         }
