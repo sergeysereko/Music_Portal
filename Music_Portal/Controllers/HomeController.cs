@@ -22,14 +22,16 @@ namespace Music_Portal.Controllers
         private readonly IMusicFileService musicFileService;
         private readonly ISingerService singerService;
         private readonly IStyleService styleService;
+        private readonly IUserService userService;
         IWebHostEnvironment _appEnvironment;
 
 
-        public HomeController(IMusicFileService mfserv, ISingerService singerserv, IStyleService styleserv, IWebHostEnvironment appEnvironment)
+        public HomeController(IMusicFileService mfserv, ISingerService singerserv, IStyleService styleserv,IUserService userserv ,IWebHostEnvironment appEnvironment)
         {
             musicFileService = mfserv;
             singerService = singerserv;
             styleService = styleserv;
+            userService = userserv;
             _appEnvironment = appEnvironment;
         }
 
@@ -376,8 +378,7 @@ namespace Music_Portal.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateMusicFile()
         {
-            //var styles = db.Styles.ToList();
-            //var singers = db.Singers.ToList();
+
             var styles = await styleService.GetStyles();
             var singers = await singerService.GetSingers();
 ;
@@ -389,209 +390,202 @@ namespace Music_Portal.Controllers
 
 
 
-        //    [HttpPost]
-        //    [AllowAnonymous]
-        //    [DisableRequestSizeLimit]
-        //    public async Task<IActionResult> CreateMusicFile(IFormFile FileMp3, [Bind("Id,Name,Id_Singer,Id_Style,Comment,FileMp3")] MusicFile_View mfile)
-        //    {
+        [HttpPost]
+        [AllowAnonymous]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> CreateMusicFile(IFormFile FileMp3, [Bind("Name,Id_Singer,Id_Style,FileMp3")] MusicFile_View mfile)
+        {
 
-        //        if (FileMp3 != null)
-        //        {
+            if (FileMp3 != null)
+            {
 
-        //            string path = "/File/" + TransliterateToLatin(FileMp3.FileName);
+                string path = "/File/" + TransliterateToLatin(FileMp3.FileName);
 
-        //            using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-        //            {
-        //                await FileMp3.CopyToAsync(fileStream);
-        //            }
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                {
+                    await FileMp3.CopyToAsync(fileStream);
+                }
 
-        //            Music_file musicfile = new Music_file();
+                Music_FileDTO musicfile = new Music_FileDTO();
 
-        //            musicfile.Name = mfile.Name;
-        //            musicfile.Id_Singer = mfile.Id_Singer;
-        //            musicfile.Id_Style = mfile.Id_Style;
-        //            musicfile.Size = (((int)FileMp3.Length) / 1000000).ToString() + " Mb";
-        //            musicfile.Rating = 0;
-        //            musicfile.File = path;
-
-
-        //            string login = HttpContext.Session.GetString("login");
-        //            if (!string.IsNullOrEmpty(login))
-        //            {
-        //                User? user = await db.Users.FirstOrDefaultAsync(u => u.Name == login);
-        //                musicfile.Id_User = user.Id;
-        //                musicfile.User = user;
-        //            }
-
-        //            Style style = await db.Styles.FirstOrDefaultAsync(u => u.Id == mfile.Id_Style);
-        //            if (style != null)
-        //            {
-        //                musicfile.Style = style;
-        //            }
-
-        //            Singer singer = await db.Singers.FirstOrDefaultAsync(u => u.Id == mfile.Id_Singer);
-        //            if (singer != null)
-        //            {
-        //                musicfile.Singer = singer;
-        //            }
-
-        //            db.Add(musicfile);
-        //            await db.SaveChangesAsync();
-        //            return RedirectToAction(nameof(Index));
-
-        //        }
-
-        //        return View(mfile);
-
-        //    }
+                musicfile.Name = mfile.Name;
+                musicfile.Id_Singer = mfile.Id_Singer;
+                musicfile.Id_Style = mfile.Id_Style;
+                musicfile.Size = (((int)FileMp3.Length) / 1000000).ToString() + " Mb";
+                musicfile.Rating = 0;
+                musicfile.File = path;
 
 
+                string login = HttpContext.Session.GetString("login");
+                if (!string.IsNullOrEmpty(login))
+                {
+                    UserDTO? user = await userService.GetUser(login);
+                    musicfile.Id_User = user.Id;
+                    musicfile.User = user.Name;
+                }
 
-        //    [HttpGet]
-        //    public async Task<IActionResult> EditMusicFile(int? id)
-        //    {
+                StyleDTO style = await styleService.GetStyle(mfile.Id_Style);
+                if (style != null)
+                {
+                    musicfile.Style = style.Name;
+                }
 
-        //        if (id == null || db.Music_files == null)
-        //        {
-        //            return NotFound();
-        //        }
+                SingerDTO singer = await singerService.GetSinger(mfile.Id_Singer);
+                if (singer != null)
+                {
+                    musicfile.Singer = singer.Name;
+                }
 
+                await musicFileService.CreateMusicFile(musicfile);
+                return RedirectToAction(nameof(Index));
 
-        //        var musicFile = await db.Music_files.FindAsync(id);
-        //        if (musicFile == null)
-        //        {
-        //            return NotFound();
-        //        }
+            }
 
-        //        var styles = db.Styles.ToList();
-        //        var singers = db.Singers.ToList();
+            return View(mfile);
 
-        //        int selectedSingerId = musicFile.Id_Singer;
-        //        int selectedStyleId = musicFile.Id_Style;
-        //        ViewBag.StyleList = new SelectList(styles, "Id", "Name", selectedStyleId);
-        //        ViewBag.SingerList = new SelectList(singers, "Id", "Name", selectedSingerId);
-
-        //        var musicFileShow = new MusicFileShow
-        //        {
-        //            MusicFileId = musicFile.Id,
-        //            MusicFileName = musicFile.Name,
-        //            MusicFileSize = musicFile.Size,
-        //            MusicFilePath = musicFile.File
-        //        };
-
-        //        return View(musicFileShow);
-
-        //    }
-
-
-        //    [HttpPost]
-        //    [AllowAnonymous]
-        //    [DisableRequestSizeLimit]
-        //    public async Task<IActionResult> EditMusicFile(IFormFile MusicFilePath, [Bind("MusicFileName,MusicFileSize,StyleName,SingerName,MusicFilePath,MusicFileId")] MusicFileShow mfile)
-        //    {
-        //        if (MusicFilePath != null)
-        //        {
-
-        //            string path = "/File/" + TransliterateToLatin(MusicFilePath.FileName);
-        //            using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-        //            {
-        //                await MusicFilePath.CopyToAsync(fileStream);
-        //            }
-
-        //            Music_file musicfile = new Music_file();
-
-        //            musicfile.Id = mfile.MusicFileId;
-        //            musicfile.Name = mfile.MusicFileName;
-        //            musicfile.Size = (((int)MusicFilePath.Length) / 1000000).ToString() + " Mb";
-        //            musicfile.Rating = 0;
-        //            musicfile.File = path;
-        //            int StyleId = int.Parse(mfile.StyleName);
-        //            int SingerId = int.Parse(mfile.SingerName);
-
-        //            string login = HttpContext.Session.GetString("login");
-        //            if (!string.IsNullOrEmpty(login))
-        //            {
-        //                User? user = await db.Users.FirstOrDefaultAsync(u => u.Name == login);
-        //                musicfile.Id_User = user.Id;
-        //                musicfile.User = user;
-        //            }
-
-        //            Style style = await db.Styles.FirstOrDefaultAsync(u => u.Id == StyleId);
-        //            if (style != null)
-        //            {
-        //                musicfile.Style = style;
-        //                musicfile.Id_Style = style.Id;
-        //            }
-
-        //            Singer singer = await db.Singers.FirstOrDefaultAsync(u => u.Id == SingerId);
-        //            if (singer != null)
-        //            {
-        //                musicfile.Singer = singer;
-        //                musicfile.Id_Singer = singer.Id;
-        //            }
-
-        //            db.Update(musicfile);
-        //            await db.SaveChangesAsync();
-        //            return RedirectToAction(nameof(Index));
-
-        //        }
-
-        //        return View(mfile);
-
-        //    }
-
-        //    [HttpGet]
-        //    public async Task<IActionResult> DeleteMusicFile(int? id)
-        //    {
-
-        //        if (id == null || db.Music_files == null)
-        //        {
-        //            return NotFound();
-        //        }
-
-
-        //        var musicFile = await db.Music_files.FindAsync(id);
-        //        if (musicFile == null)
-        //        {
-        //            return NotFound();
-        //        }
-
-        //        Style style = await db.Styles.FirstOrDefaultAsync(u => u.Id == musicFile.Id_Style);
-        //        Singer singer = await db.Singers.FirstOrDefaultAsync(u => u.Id == musicFile.Id_Singer);
+        }
 
 
 
-        //        var musicFileShow = new MusicFileShow
-        //        {
-        //            MusicFileId = musicFile.Id,
-        //            MusicFileName = musicFile.Name,
-        //            MusicFileSize = musicFile.Size,
-        //            MusicFilePath = musicFile.File,
-        //            SingerName = singer.Name,
-        //            StyleName = style.Name
-        //        };
+        [HttpGet]
+        public async Task<IActionResult> EditMusicFile(int id)
+        {
 
-        //        return View(musicFileShow);
-        //    }
+            if (id == null || await musicFileService.GetMusicFiles() == null)
+            {
+                return NotFound();
+            }
+
+            var musicFile = await musicFileService.GetMusicFile(id);
+            if (musicFile == null)
+            {
+                return NotFound();
+            }
+
+            var styles = await styleService.GetStyles();
+            var singers = await singerService.GetSingers();
 
 
-        //    [HttpPost]
-        //    [ValidateAntiForgeryToken]
-        //    public async Task<IActionResult> DeleteMusicFile(int id)
-        //    {
-        //        if (db.Music_files == null)
-        //        {
-        //            return Problem("Entity set 'MusicPortalContext.MusicFile'  is null.");
-        //        }
-        //        var musicFile = await db.Music_files.FindAsync(id);
-        //        if (musicFile != null)
-        //        {
-        //            db.Music_files.Remove(musicFile);
-        //        }
+            int selectedSingerId = musicFile.Id_Singer;
+            int selectedStyleId = musicFile.Id_Style;
+            ViewBag.StyleList = new SelectList(styles, "Id", "Name", selectedStyleId);
+            ViewBag.SingerList = new SelectList(singers, "Id", "Name", selectedSingerId);
 
-        //        await db.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
+            var musicFileShow = new MusicFileShow
+            {
+                MusicFileId = musicFile.Id,
+                MusicFileName = musicFile.Name,
+                MusicFileSize = musicFile.Size,
+                MusicFilePath = musicFile.File
+            };
+
+            return View(musicFileShow);
+
+        }
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> EditMusicFile(IFormFile MusicFilePath, [Bind("MusicFileName,MusicFileSize,StyleName,SingerName,MusicFilePath,MusicFileId")] MusicFileShow mfile)
+        {
+            if (MusicFilePath != null)
+            {
+
+                string path = "/File/" + TransliterateToLatin(MusicFilePath.FileName);
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                {
+                    await MusicFilePath.CopyToAsync(fileStream);
+                }
+
+                Music_FileDTO musicfile = new Music_FileDTO();
+
+                musicfile.Id = mfile.MusicFileId;
+                musicfile.Name = mfile.MusicFileName;
+                musicfile.Size = (((int)MusicFilePath.Length) / 1000000).ToString() + " Mb";
+                musicfile.Rating = 0;
+                musicfile.File = path;
+                int StyleId = int.Parse(mfile.StyleName);
+                int SingerId = int.Parse(mfile.SingerName);
+
+                string login = HttpContext.Session.GetString("login");
+                if (!string.IsNullOrEmpty(login))
+                {
+                    UserDTO? user = await userService.GetUser(login);
+                    musicfile.Id_User = user.Id;
+                    musicfile.User = user.Name;
+                }
+
+                StyleDTO style = await styleService.GetStyle(StyleId);
+                if (style != null)
+                {
+                    musicfile.Style = style.Name;
+                    musicfile.Id_Style = style.Id;
+                }
+
+                SingerDTO singer = await singerService.GetSinger(SingerId);
+                if (singer != null)
+                {
+                    musicfile.Singer = singer.Name;
+                    musicfile.Id_Singer = singer.Id;
+                }
+
+                await musicFileService.UpdateMusicFile(musicfile);
+                return RedirectToAction(nameof(Index));
+
+            }
+            return View(mfile);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteMusicFileView(int id)
+        {
+
+            if (id == null || await musicFileService.GetMusicFiles() == null)
+            {
+                return NotFound();
+            }
+
+            var musicFile = await musicFileService.GetMusicFile(id);
+            if (musicFile == null)
+            {
+                return NotFound();
+            }
+
+            StyleDTO style = await styleService.GetStyle(musicFile.Id_Style);
+            SingerDTO singer = await singerService.GetSinger(musicFile.Id_Singer);
+
+            var musicFileShow = new MusicFileShow
+            {
+                MusicFileId = musicFile.Id,
+                MusicFileName = musicFile.Name,
+                MusicFileSize = musicFile.Size,
+                MusicFilePath = musicFile.File,
+                SingerName = singer.Name,
+                StyleName = style.Name
+            };
+
+            return View(musicFileShow);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteMusicFile(MusicFileShow model)
+        {
+            int id = model.MusicFileId;
+            if (await musicFileService.GetMusicFiles() == null)
+            {
+                return Problem("Entity set 'MusicPortalContext.MusicFile'  is null.");
+            }
+            var musicFile = await musicFileService.GetMusicFile(id);
+            if (musicFile != null)
+            {
+                await musicFileService.DeleteMusicFile(id);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
 
 
 

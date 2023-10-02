@@ -14,13 +14,13 @@ namespace MusicPortal.BLL.DTO
         [Required(ErrorMessage = "Поле должно быть установлено.")]
         [Display(Name = "Название: ")]
         public string Name { get; set; }
-        [Required(ErrorMessage = "Поле должно быть установлено.")]
+        
         [Display(Name = "Размер: ")]
         public string? Size { get; set; }
-        [Required(ErrorMessage = "Поле должно быть установлено.")]
+        
         [Display(Name = "Рейтинг: ")]
         public int Rating { get; set; }
-        [Required(ErrorMessage = "Поле должно быть установлено.")]
+        
         [Display(Name = "Путь к файлу: ")]
         public string? File { get; set; }
 

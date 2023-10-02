@@ -13,6 +13,7 @@ namespace MusicPortal.BLL.Interfaces
         Task UpdateUser(UserDTO teamDto);
         Task DeleteUser(int id);
         Task<UserDTO> GetUser(int id);
+        Task<UserDTO> GetUser(string login);
         Task<IEnumerable<UserDTO>> GetUsers();
     }
 }

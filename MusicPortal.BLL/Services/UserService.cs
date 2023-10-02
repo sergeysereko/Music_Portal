@@ -75,6 +75,24 @@ namespace MusicPortal.BLL.Services
             };
         }
 
+        public async Task<UserDTO> GetUser(string login)
+        {
+            var user = await Database.Users.Get(login);
+            if (user == null)
+            {
+                throw new ValidationException("Wrong user!");
+            }
+            return new UserDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                Password = user.Password,
+                Salt = user.Salt,
+                Access = user.Access
+            };
+        }
+
 
         
         public async Task<IEnumerable<UserDTO>> GetUsers()

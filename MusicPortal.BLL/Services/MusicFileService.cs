@@ -26,6 +26,15 @@ namespace MusicPortal.BLL.Services
 
         public async Task CreateMusicFile(Music_FileDTO mfDto)
         {
+            var user = new User();
+            user = await Database.Users.Get(mfDto.Id_User);
+
+            var singer = new Singer();
+            singer = await Database.Singers.Get(mfDto.Id_Singer);
+
+            var style = new Style();
+            style = await Database.Styles.Get(mfDto.Id_Style);
+
             var music_file = new Music_file
             {
                 Id = mfDto.Id,
@@ -36,7 +45,9 @@ namespace MusicPortal.BLL.Services
                 Id_User = mfDto.Id_User,
                 Id_Style = mfDto.Id_Style,
                 Id_Singer = mfDto.Id_Singer,
-
+                User = user,
+                Singer = singer,
+                Style = style
             };
             await Database.Music_files.Create(music_file);
             await Database.Save();
@@ -44,6 +55,16 @@ namespace MusicPortal.BLL.Services
 
         public async Task UpdateMusicFile(Music_FileDTO mfDto)
         {
+            var user = new User();
+            user = await Database.Users.Get(mfDto.Id_User);
+
+            var singer = new Singer();
+            singer = await Database.Singers.Get(mfDto.Id_Singer);
+
+            var style = new Style();
+            style = await Database.Styles.Get(mfDto.Id_Style);
+
+
             var music_file = new Music_file
             {
                 Id = mfDto.Id,
@@ -53,7 +74,10 @@ namespace MusicPortal.BLL.Services
                 File = mfDto.File,
                 Id_User = mfDto.Id_User,
                 Id_Style = mfDto.Id_Style,
-                Id_Singer = mfDto.Id_Singer
+                Id_Singer = mfDto.Id_Singer,
+                User = user,
+                Singer = singer,
+                Style = style
 
             };
             Database.Music_files.Update(music_file);
