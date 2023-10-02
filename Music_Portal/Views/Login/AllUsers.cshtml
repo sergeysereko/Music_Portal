@@ -1,4 +1,4 @@
-﻿@model MusicPortal.DAL.Models.User
+﻿@model MusicPortal.BLL.DTO.UserDTO
 @{
     ViewData["Title"] = "AllUsers";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -35,7 +35,7 @@
                 </td>
                 <td>
                     <a asp-action="EditAccess" asp-route-id="@item.Id" class="btn btn-primary">Редактировать доступ</a> |
-                    <a asp-action="DeleteUser" asp-route-id="@item.Id" class="btn btn-danger">Удалить участника</a>
+                    <a asp-action="DeleteUserView" asp-route-id="@item.Id" class="btn btn-danger">Удалить участника</a>
                 </td>
             </tr>
         }

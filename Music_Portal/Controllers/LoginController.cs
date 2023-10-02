@@ -7,16 +7,19 @@ using MusicPortal.DAL.Context;
 using MusicPortal.DAL.Interfaces;
 using MusicPortal.DAL.Models;
 using MusicPortal.DAL.Repositories;
+using MusicPortal.BLL.Interfaces;
+using MusicPortal.BLL.DTO;
+using MusicPortal.BLL.Services;
 
 namespace Music_Portal.Controllers
 {
     public class LoginController : Controller
     {
 
-        MusicPortalContext db;
-        public LoginController(MusicPortalContext context)
+        private readonly IUserService userService;
+        public LoginController(IUserService userserv)
         {
-            db = context;
+            userService = userserv;
         }
 
         public IActionResult Index()
@@ -40,22 +43,24 @@ namespace Music_Portal.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(Login logon)
+        public async Task<IActionResult> Login(Login logon)
         {
+            
             if (ModelState.IsValid)
             {
-                if (db.Users.ToList().Count == 0)
+                if (await userService.GetUsers() == null)
                 {
                     ModelState.AddModelError("", "Wrong login or password!");
                     return View(logon);
                 }
-                var users = db.Users.Where(a => a.Name == logon.UserName);
-                if (users.ToList().Count == 0)
+                var users = await userService.GetUser(logon.UserName);
+                if (users == null)
                 {
                     ModelState.AddModelError("", "Wrong login or password!");
                     return View(logon);
                 }
-                var user = users.First();
+                UserDTO user = new UserDTO();
+                user = users;
                 string? salt = user.Salt;
 
                 //переводим пароль в байт-массив  
@@ -92,11 +97,11 @@ namespace Music_Portal.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Registration(Registration reg)
+        public async Task<IActionResult> Registration(Registration reg)
         {
             if (ModelState.IsValid)
             {
-                User user = new User();
+                UserDTO user = new UserDTO();
                 user.Name = reg.Login;
                 user.Email = reg.Email;
                 user.Access = 0;
@@ -126,8 +131,8 @@ namespace Music_Portal.Controllers
 
                 user.Password = hash.ToString();
                 user.Salt = salt;
-                db.Users.Add(user);
-                db.SaveChanges();
+                await userService.CreateUser(user);
+
                 return RedirectToAction("Login");
             }
 
@@ -137,21 +142,20 @@ namespace Music_Portal.Controllers
 
         public async Task<IActionResult> AllUsers()
         {
-            IEnumerable<User> users = await Task.Run(() => db.Users);
+            var users = await userService.GetUsers();
             ViewBag.Users = users;
             return View();
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> EditAccess(int? id)
+        public async Task<IActionResult> EditAccess(int id)
         {
-            if (id == null || db.Users == null)
+            if (id == null || await userService.GetUsers() == null)
             {
                 return NotFound();
             }
-
-            var user = await db.Users.FindAsync(id);
+            var user = await userService.GetUser(id);
             if (user == null)
             {
                 return NotFound();
@@ -163,7 +167,7 @@ namespace Music_Portal.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditAccess(int id, [Bind("Id,Name,Email,Password,Salt,Access,Music_file")] User user)
+        public async Task<IActionResult> EditAccess(int id, [Bind("Id,Name,Email,Password,Salt,Access,Music_file")] UserDTO user)
         {
             if (id != user.Id)
             {
@@ -174,8 +178,7 @@ namespace Music_Portal.Controllers
             {
                 try
                 {
-                    db.Update(user);
-                    await db.SaveChangesAsync();
+                    await userService.UpdateUser(user);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -188,26 +191,26 @@ namespace Music_Portal.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(AllUsers));
             }
             return View(user);
         }
 
         private bool UserExists(int id)
         {
-            return (db.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+            var users = userService.GetUsers().GetAwaiter().GetResult();
+            return users.Any(user => user.Id == id);       
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> DeleteUser(int? id)
+        public async Task<IActionResult> DeleteUserView(int id)
         {
-            if (id == null || db.Users == null)
+            if (id == null || await userService.GetUsers() == null)
             {
                 return NotFound();
             }
-
-            var user = await db.Users.FirstOrDefaultAsync(m => m.Id == id);
+            var user = await userService.GetUser(id);
             if (user == null)
             {
                 return NotFound();
@@ -217,23 +220,20 @@ namespace Music_Portal.Controllers
         }
 
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            if (db.Users == null)
+            if (await userService.GetUsers() == null)
             {
                 return Problem("Entity set 'MusicPortalContext.User'  is null.");
             }
-            var user = await db.Users.FindAsync(id);
+            var user = await userService.GetUser(id);
             if (user != null)
             {
-                db.Users.Remove(user);
+                await userService.DeleteUser(id);
             }
-
-            await db.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(AllUsers));
         }
     }
 }

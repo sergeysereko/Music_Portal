@@ -1,4 +1,4 @@
-﻿@model MusicPortal.DAL.Models.User
+﻿@model MusicPortal.BLL.DTO.UserDTO
 @{
     ViewData["Title"] = "DeleteUser";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -6,7 +6,7 @@
 
 <h3>Удаление участника</h3>
 <h5>Вы уверены, что хотите удалить участника?</h5>
-<div">
+<div>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -33,6 +33,7 @@
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Удалить" class="btn btn-danger" /> |
         <a asp-action="Index" class="links"> Вернуться на главную</a>
+        
     </form>
 </div>
 
