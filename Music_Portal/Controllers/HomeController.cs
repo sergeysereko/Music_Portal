@@ -209,7 +209,7 @@ namespace Music_Portal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteStyle(int id)
         {
-            if (styleService.GetStyles() == null)
+            if (await styleService.GetStyles() == null)
             {
                 return Problem("Entity set 'MusicPortalContext.Style'  is null.");
             }
